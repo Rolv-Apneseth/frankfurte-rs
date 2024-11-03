@@ -1,0 +1,28 @@
+[package]
+name = "frankfurter_cli"
+description = "CLI wrapper around the Frankfurter API"
+version = { workspace = true }
+license = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+repository = { workspace = true }
+readme = { workspace = true }
+rust-version = { workspace = true }
+
+[[bin]]
+name = "frs"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { workspace = true }
+enum_dispatch = { workspace = true }
+chrono = { workspace = true }
+strum = { workspace = true }
+url = { workspace = true }
+tokio = { workspace = true }
+lib_frankfurter = { path = "../lib" }
+clap = { version = "4.5.19", features = ["derive"] }
+termcolor = { version = "1.4.1" }
+is-terminal = { version = "0.4.13" }
+comfy-table = "7.1.1"
+anyhow = "1.0.91"
