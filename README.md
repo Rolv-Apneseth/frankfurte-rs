@@ -50,7 +50,7 @@ cargo install frankfurter_cli
 #### AUR
 
 ```bash
-paru -S frankfurter_cli
+paru -S frs
 ```
 
 ### Usage
