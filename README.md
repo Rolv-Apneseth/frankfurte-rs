@@ -94,7 +94,7 @@ To set up and use a self-hosted version of the API, follow these steps:
 ## Credit
 
 - [Frankfurter](https://github.com/hakanensari/frankfurter) of course, for be the underlying API that this project wraps
-- [ltrs](https://github.com/jeertmans/languagetool-rust) for inspiration and a look at how Rust API bindings should look/function
+- [LanguageTool-Rust](https://github.com/jeertmans/languagetool-rust) for inspiration and a look at how Rust API bindings should look/function
 
 ## Licence  
 
