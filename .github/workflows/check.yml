@@ -20,9 +20,8 @@ jobs:
             - name: Install nightly Rust toolchain
               run: |
                 rustup toolchain install nightly --profile minimal
-                rustup component add clippy rustfmt
+                rustup component add clippy rustfmt --toolchain nightly
                 rustup default nightly
-
 
             - name: Cache dependencies
               uses: Swatinem/rust-cache@v2
