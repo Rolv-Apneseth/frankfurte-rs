@@ -1,0 +1,41 @@
+name: Check
+
+on:
+    workflow_dispatch:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+
+env:
+    CARGO_TERM_COLOR: always
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install nightly Rust toolchain
+              run: |
+                rustup toolchain install nightly --profile minimal
+                rustup component add clippy
+
+            - name: Cache dependencies
+              uses: Swatinem/rust-cache@v2
+
+            - name: Check
+              run: cargo check --all
+
+            - name: Build
+              run: cargo build --all --verbose
+
+            - name: Format
+              run: cargo fmt --all --check
+
+            - name: Lint
+              run: cargo clippy --all -- -D warnings
+
+            - name: Tests
+              run: cargo test --all --verbose
