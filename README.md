@@ -80,9 +80,12 @@ View the full usage with `frs --help`.
 A public, free-to-use version of the API is available [here](https://api.frankfurter.app/), and will be used by default. However, this repo comes with a [docker-compose.yml](./docker-compose.yml) for easy self-hosting of the `Frankfurter` API.
 
 To set up and use a self-hosted version of the API, follow these steps:
+
 1. Copy/clone the `docker-compose.yml` file to your system
 2. Run `docker compose up -d --wait` to start up both the `postgresql` database and the `Frankfurter` API itself locally using Docker
-3. When running commands, specify the desired API URL, e.g. `frs --url http://localhost:8080`
+3. When running commands, specify the desired API URL using either the `--url` flag or the `FRANKFURTER_URL` environment variable:
+    - `frs --url http://localhost:8080`
+    - `FRANKFURTER_URL="http://localhost:8080 frs`
 
 ## Related Projects
 
