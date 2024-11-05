@@ -1,3 +1,4 @@
+use std::env::var;
 use std::io::Write;
 
 use clap::{Parser, Subcommand};
@@ -26,6 +27,8 @@ pub struct Cli {
     color: clap::ColorChoice,
 
     ///  URL of the Frankfurter API which queries should be directed to, e.g. http://localhost:8080
+    ///
+    /// This will override the $FRANKFURTER_URL environment variable if it is present.
     #[arg(short, long)]
     url: Option<Url>,
 
@@ -82,9 +85,15 @@ impl Cli {
     }
 
     /// Execute command, possibly returning an error.
-    pub async fn execute(self) {
-        let server_client: ServerClient = self
-            .url
+    pub async fn execute(mut self) {
+        let url = self.url.take().or_else(|| {
+            // Fallback to environment variable if `url` option is not passed
+            var("FRANKFURTER_URL")
+                .ok()
+                .and_then(|u| Url::parse(&u).ok())
+        });
+
+        let server_client: ServerClient = url
             .as_ref()
             .map(|u| ServerClient::new(u.clone()))
             .unwrap_or_default();
