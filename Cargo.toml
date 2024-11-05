@@ -13,9 +13,9 @@ repository = "https://github.com/rolv-apneseth/frankfurters"
 rust-version = "1.82.0"
 
 [workspace.dependencies]
-serde_json = { version = "1.0.128", features = ["preserve_order"] }
+serde_json = { version = "1.0.132", features = ["preserve_order"] }
 enum_dispatch = { version = "0.3.13" }
 chrono = { version = "0.4.38", features = ["now", "serde"] }
 strum = { version = "0.26.3", features = ["derive"] }
-url = { version = "2.5.2", features = ["serde"] }
-tokio = { version = "1.40.0", features = ["macros", "rt-multi-thread"] }
+url = { version = "2.5.3", features = ["serde"] }
+tokio = { version = "1.41.0", features = ["macros", "rt-multi-thread"] }
