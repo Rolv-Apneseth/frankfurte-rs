@@ -1,5 +1,4 @@
-use std::env::var;
-use std::io::Write;
+use std::{env::var, io::Write};
 
 use clap::{Parser, Subcommand};
 use enum_dispatch::enum_dispatch;
