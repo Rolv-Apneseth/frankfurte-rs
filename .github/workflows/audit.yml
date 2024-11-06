@@ -5,8 +5,14 @@ on:
     - cron: '0 0 * * 1'
   push:
       branches: ["main"]
+      paths:
+          - '.github/workflows/**'
+          - '**/Cargo.*'
   pull_request:
       branches: ["main"]
+      paths:
+          - '.github/workflows/**'
+          - '**/Cargo.*'
 jobs:
   security_audit:
     runs-on: ubuntu-latest
