@@ -72,10 +72,13 @@ impl ServerClientRequest for Request {
     }
 
     fn ensure_valid(&self) -> crate::error::Result<()> {
-        if let (Some(targets), Some(base)) = (&self.targets, &self.base) {
-            if targets.contains(base) {
+        if let Some(targets) = &self.targets {
+            // Check against the default value too as passing targets which include the default (EUR),
+            // will still cause an error to be returned from the API
+            let base = self.base.clone().unwrap_or_default();
+            if targets.contains(&base) {
                 return Err(Error::RequestTargetsIncludeBase {
-                    base: base.clone(),
+                    base,
                     targets: targets.clone(),
                 });
             }
