@@ -56,6 +56,17 @@ impl ServerClient {
         format!("{}{endpoint}", self.url.as_str())
     }
 
+    /// Makes a basic request to the API and returns true in the event of a successful response.
+    ///
+    /// Useful for a simple check that the API is up and successfully responding to requests.
+    pub async fn is_server_available(&self) -> bool {
+        self.client
+            .get(self.url(""))
+            .send()
+            .await
+            .is_ok_and(|r| r.status().is_success())
+    }
+
     /// Request exchange rates for a specific date (latest by default).
     pub async fn convert(&self, req: convert::Request) -> Result<convert::Response> {
         let (url, query_params) = req.setup()?;
