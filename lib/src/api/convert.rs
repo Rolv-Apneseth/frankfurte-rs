@@ -36,6 +36,32 @@ pub struct Request {
     pub date: Option<NaiveDate>,
 }
 
+impl Request {
+    /// Consumes the [`Request`] and returns a new one with the given base.
+    pub fn with_base(mut self, base: Currency) -> Self {
+        self.base = Some(base);
+        self
+    }
+
+    /// Consumes the [`Request`] and returns a new one with the given targets.
+    pub fn with_targets(mut self, targets: Vec<Currency>) -> Self {
+        self.targets = Some(targets);
+        self
+    }
+
+    /// Consumes the [`Request`] and returns a new one with the given amount.
+    pub fn with_amount(mut self, amount: CurrencyValue) -> Self {
+        self.amount = Some(amount);
+        self
+    }
+
+    /// Consumes the [`Request`] and returns a new one with the given date.
+    pub fn with_date(mut self, date: NaiveDate) -> Self {
+        self.date = Some(date);
+        self
+    }
+}
+
 impl ServerClientRequest for Request {
     /// Get the endpoint for fetching exchange rates for a specific date.
     fn get_url(&self) -> Cow<'static, str> {
