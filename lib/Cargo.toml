@@ -21,3 +21,4 @@ thiserror = { version = "1.0.64" }
 
 [dev-dependencies]
 tokio = { workspace = true }
+pretty_assertions = { version = "1.4.1" }
