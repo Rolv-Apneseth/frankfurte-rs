@@ -6,15 +6,14 @@
 pub mod convert;
 pub mod currencies;
 pub mod period;
+mod shared;
 
 use std::borrow::Cow;
 
+use shared::*;
 use url::Url;
 
-use crate::{
-    data::{Currency, CurrencyValue},
-    error::Result,
-};
+use crate::error::Result;
 
 /// A HTTP client for making requests to a Frankfurter API.
 #[derive(Debug)]
@@ -109,11 +108,11 @@ impl ServerClient {
     }
 }
 
-type EndpointUrl = Cow<'static, str>;
-type QueryParams = Vec<(&'static str, String)>;
+pub type EndpointUrl = Cow<'static, str>;
+pub type QueryParams = Vec<(&'static str, String)>;
 
 /// Utility trait to provide a common interface for server client requests.
-trait ServerClientRequest {
+pub trait ServerClientRequest {
     fn get_url(&self) -> EndpointUrl;
     fn ensure_valid(&self) -> Result<()>;
 
@@ -129,35 +128,5 @@ trait ServerClientRequest {
     }
 }
 
-/// Common query parameters between [`convert::Request`] and [`period::Request`].
-pub(super) fn build_base_query_params(
-    amount: &Option<CurrencyValue>,
-    base: &Option<Currency>,
-    targets: &Option<Vec<Currency>>,
-) -> Vec<(&'static str, String)> {
-    let mut query_params = vec![];
 
-    if let Some(a) = amount {
-        query_params.push(("amount", format!("{a:.2}")));
-    };
-
-    if let Some(b) = base {
-        query_params.push(("base", b.to_string()));
-    };
-
-    if let Some(t) = targets {
-        // An empty string for the target/symbol would lead to an error being returned from the API,
-        // so skip if targets is empty
-        if !t.is_empty() {
-            query_params.push((
-                "symbols",
-                t.iter()
-                    .map(|s| s.to_string())
-                    .collect::<Vec<String>>()
-                    .join(","),
-            ))
-        }
-    };
-
-    query_params
 }

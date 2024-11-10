@@ -3,11 +3,8 @@ use std::borrow::Cow;
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
-use super::{build_base_query_params, ServerClientRequest};
-use crate::{
-    data::{Currency, CurrencyValue, CurrencyValueMap},
-    error::Error,
-};
+use super::{base_build_query_params, base_ensure_valid, ServerClientRequest};
+use crate::data::{Currency, CurrencyValue, CurrencyValueMap};
 
 /// Response for fetching the latest exchange rates.
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -72,22 +69,10 @@ impl ServerClientRequest for Request {
     }
 
     fn ensure_valid(&self) -> crate::error::Result<()> {
-        if let Some(targets) = &self.targets {
-            // Check against the default value too as passing targets which include the default (EUR),
-            // will still cause an error to be returned from the API
-            let base = self.base.clone().unwrap_or_default();
-            if targets.contains(&base) {
-                return Err(Error::RequestTargetsIncludeBase {
-                    base,
-                    targets: targets.clone(),
-                });
-            }
-        }
-
-        Ok(())
+        base_ensure_valid(&self.base, &self.targets)
     }
 
     fn build_query_params(&self) -> super::QueryParams {
-        build_base_query_params(&self.amount, &self.base, &self.targets)
+        base_build_query_params(&self.amount, &self.base, &self.targets)
     }
 }
