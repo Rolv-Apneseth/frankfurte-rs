@@ -32,11 +32,14 @@ jobs:
             - name: Check
               run: cargo check --all
 
+            - name: Format
+              run: cargo fmt --all --check
+
             - name: Build
               run: cargo build --all --verbose
 
-            - name: Format
-              run: cargo fmt --all --check
+            - name: Docs
+              run: cargo doc --all --verbose
 
             - name: Lint
               run: cargo clippy --all -- -D warnings
