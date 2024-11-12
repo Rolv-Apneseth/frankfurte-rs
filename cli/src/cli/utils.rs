@@ -13,9 +13,10 @@ pub fn if_supports_colour(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use comfy_table::Color;
     use termcolor::{ColorChoice, StandardStream};
+
+    use super::*;
 
     #[test]
     fn test_if_supports_colour() {

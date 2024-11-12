@@ -120,3 +120,107 @@ impl ServerClientRequest for Request {
         base_build_query_params(&self.amount, &self.base, &self.targets)
     }
 }
+
+#[cfg(test)]
+mod tests_period {
+    use chrono::Days;
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+    use crate::api::test_utils::dbg_err;
+
+    #[test]
+    fn get_url() {
+        assert_eq!(
+            Request::default().get_url(),
+            format!("{}..", NaiveDate::default())
+        );
+
+        let date = NaiveDate::from_ymd_opt(2000, 7, 2).unwrap();
+        assert_eq!(
+            Request::default().with_start_date(date).get_url(),
+            format!("{date}..")
+        );
+
+        let date = NaiveDate::from_ymd_opt(2020, 8, 9).unwrap();
+        assert_eq!(
+            Request::default().with_end_date(date).get_url(),
+            format!("{}..{date}", NaiveDate::default())
+        );
+
+        let start_date = NaiveDate::from_ymd_opt(2020, 8, 9).unwrap();
+        let end_date = NaiveDate::from_ymd_opt(2020, 10, 9).unwrap();
+        assert_eq!(
+            Request::default()
+                .with_start_date(start_date)
+                .with_end_date(end_date)
+                .get_url(),
+            format!("{start_date}..{end_date}")
+        );
+    }
+
+    #[test]
+    fn ensure_valid() {
+        // Check that [`super::base_ensure_valid`] is being called
+        assert!(Request::default()
+            .with_base(Currency::EUR)
+            .with_targets(vec![Currency::EUR, Currency::USD])
+            .ensure_valid()
+            .is_err());
+
+        // VALID START DATE
+        assert!(Request::default()
+            .with_start_date(NaiveDate::default())
+            .ensure_valid()
+            .inspect_err(dbg_err)
+            .is_ok());
+
+        // INVALID START DATE
+        let tomorrow = Utc::now()
+            .checked_add_days(Days::new(1))
+            .unwrap()
+            .date_naive();
+        assert!(Request::default()
+            .with_start_date(tomorrow)
+            .ensure_valid()
+            .is_err());
+
+        // VALID END DATE
+        assert!(Request::default()
+            .with_end_date(NaiveDate::from_ymd_opt(2000, 2, 4).unwrap())
+            .ensure_valid()
+            .inspect_err(dbg_err)
+            .is_ok());
+        // Not quite weekend only - Friday-Sun
+        assert!(Request::default()
+            .with_start_date(NaiveDate::from_ymd_opt(2024, 8, 2).unwrap())
+            .with_end_date(NaiveDate::from_ymd_opt(2024, 8, 4).unwrap())
+            .ensure_valid()
+            .inspect_err(dbg_err)
+            .is_ok());
+
+        // INVALID END DATE
+        assert!(Request::default()
+            .with_end_date(NaiveDate::default().checked_sub_days(Days::new(1)).unwrap())
+            .ensure_valid()
+            .is_err());
+        // Weekend only - Sat-Sun
+        assert!(Request::default()
+            .with_start_date(NaiveDate::from_ymd_opt(2024, 8, 3).unwrap())
+            .with_end_date(NaiveDate::from_ymd_opt(2024, 8, 4).unwrap())
+            .ensure_valid()
+            .is_err());
+        // Weekend only - Sat-Sat
+        assert!(Request::default()
+            .with_start_date(NaiveDate::from_ymd_opt(2024, 1, 13).unwrap())
+            .with_end_date(NaiveDate::from_ymd_opt(2024, 1, 13).unwrap())
+            .ensure_valid()
+            .is_err());
+        // Weekend only - Sun-Sun
+        assert!(Request::default()
+            .with_start_date(NaiveDate::from_ymd_opt(2024, 6, 23).unwrap())
+            .with_end_date(NaiveDate::from_ymd_opt(2024, 6, 23).unwrap())
+            .ensure_valid()
+            .is_err());
+    }
+}

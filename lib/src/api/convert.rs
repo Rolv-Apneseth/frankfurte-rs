@@ -76,3 +76,57 @@ impl ServerClientRequest for Request {
         base_build_query_params(&self.amount, &self.base, &self.targets)
     }
 }
+
+#[cfg(test)]
+mod tests_convert {
+    use chrono::{Days, Utc};
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+    use crate::api::test_utils::dbg_err;
+
+    #[test]
+    fn get_url() {
+        assert_eq!(Request::default().get_url(), "latest");
+
+        let date = NaiveDate::from_ymd_opt(2000, 7, 2).unwrap();
+        assert_eq!(
+            Request::default().with_date(date).get_url(),
+            format!("{date}")
+        );
+    }
+
+    #[test]
+    fn ensure_valid() {
+        // Check that [`super::base_ensure_valid`] is being called
+        assert!(Request::default()
+            .with_base(Currency::EUR)
+            .with_targets(vec![Currency::EUR, Currency::USD])
+            .ensure_valid()
+            .is_err());
+
+        // VALID DATE
+        assert!(Request::default()
+            .with_date(NaiveDate::default())
+            .ensure_valid()
+            .inspect_err(dbg_err)
+            .is_ok());
+
+        // Will just use an earlier date
+        let tomorrow = Utc::now()
+            .checked_add_days(Days::new(1))
+            .unwrap()
+            .date_naive();
+        assert!(Request::default()
+            .with_date(tomorrow)
+            .ensure_valid()
+            .inspect_err(dbg_err)
+            .is_ok());
+        // Weekend - will just use the closest date with data
+        assert!(Request::default()
+            .with_date(NaiveDate::from_ymd_opt(2024, 2, 3).unwrap())
+            .ensure_valid()
+            .inspect_err(dbg_err)
+            .is_ok());
+    }
+}
