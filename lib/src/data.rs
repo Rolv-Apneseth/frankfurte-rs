@@ -3,7 +3,7 @@ use std::{collections::BTreeMap, fmt::Display, num::ParseFloatError, ops::Deref,
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumString, VariantNames};
 
-/// A map of [`Currency`] to their respective [`Value`], sorted by the currency code keys.
+/// A map of [`Currency`] to their respective [`CurrencyValue`], sorted by the currency code keys.
 ///
 /// This represents a JSON response from the server outlining exchange rates for different currency
 /// ISO 4217 codes.
