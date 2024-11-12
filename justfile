@@ -7,8 +7,6 @@ alias d := develop
 alias du := docker_up
 alias dd := docker_down
 
-# COMMANDS -----------------------------------------------------------------------------------------
-
 # List commands
 default:
     @just --list
@@ -22,20 +20,20 @@ format: check
     cargo +nightly fmt
 
 # Test
-test: format
-    cargo test --all
+test: docker_up && docker_down
+    cargo test --all -- --nocapture
+
+# Run test suite whenever any change is made
+develop: format docker_up
+    cargo watch -w cli -w lib -s "cargo test --all -- --nocapture"
 
 # Build
-build: test
+build: format
     cargo build --release
 
 # Run an example
 example EXAMPLE=("basic"): docker_up && docker_down
     -cargo run --package lib_frankfurter --example {{ EXAMPLE }}
-
-# Run test suite whenever any change is made
-develop:
-    cargo watch -w cli -w lib -s "just test"
 
 # Start up the local Frankfurter API
 docker_up:
