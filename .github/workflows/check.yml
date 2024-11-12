@@ -45,4 +45,16 @@ jobs:
               run: cargo clippy --all -- -D warnings
 
             - name: Tests
-              run: cargo test --all --verbose
+              run: |
+                # Full tests for Linux only, due to requirement of running local API hosted through docker
+                if [ "$RUNNER_OS" == "Linux" ]; then
+                  docker compose up -d --wait
+                  # Wait for Frankfurter container to fetch data
+                  sleep 60
+                  cargo test --all --verbose
+                  docker compose down
+                else
+                  cargo test --package lib_frankfurter --lib
+                  cargo test --package frankfurter_cli --bin frs
+                fi
+              shell: bash
