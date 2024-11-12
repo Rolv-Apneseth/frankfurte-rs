@@ -128,5 +128,11 @@ pub trait ServerClientRequest {
     }
 }
 
+#[cfg(test)]
+mod test_utils {
+    use crate::error::Error;
 
+    pub fn dbg_err(e: &Error) {
+        dbg!(e);
+    }
 }
