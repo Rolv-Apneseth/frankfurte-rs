@@ -26,3 +26,7 @@ termcolor = { version = "1.4.1" }
 is-terminal = { version = "0.4.13" }
 comfy-table = "7.1.1"
 anyhow = "1.0.91"
+
+[dev-dependencies]
+assert_cmd = "2.0.16"
+predicates = "3.1.2"
