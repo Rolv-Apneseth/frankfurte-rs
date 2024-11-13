@@ -1,4 +1,4 @@
-use std::{env::var, io::Write};
+use std::{env::var, io::Write, process::exit};
 
 use clap::{Parser, Subcommand};
 use enum_dispatch::enum_dispatch;
@@ -110,6 +110,7 @@ impl Cli {
             }
 
             writeln!(&mut stderr, "Error: {e}").expect("Failed to write to stderr");
+            exit(1);
         }
     }
 }
