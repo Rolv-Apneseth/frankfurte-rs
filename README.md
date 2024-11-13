@@ -1,7 +1,8 @@
 # Frankfurte-rs
 
 [![Crates.io - Library](https://img.shields.io/crates/v/lib_frankfurter)](https://crates.io/crates/lib_frankfurter)
-[![docs.rs - Library](https://img.shields.io/docsrs/languagetool-rust)](https://docs.rs/lib_frankfurter)
+[![docs.rs - Library](https://img.shields.io/docsrs/lib_frankfurter)](https://docs.rs/lib_frankfurter)
+[![AUR](https://img.shields.io/aur/version/frs)](https://aur.archlinux.org/packages/frs)
 
 Rust library and CLI to interface with any Frankfurter API.
 > *[Frankfurter](https://github.com/hakanensari/frankfurter) is a free, open source and [self-hostable](https://hub.docker.com/r/hakanensari/frankfurter) currency exchange rate API.
