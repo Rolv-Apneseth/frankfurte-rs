@@ -1,0 +1,30 @@
+on:
+  workflow_dispatch:
+  push:
+      branches: ["main"]
+  pull_request:
+      branches: ["main"]
+
+name: MSRV check
+
+jobs:
+  msrv_check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install stable toolchain
+      run: rustup toolchain install stable
+
+    - name: Install Cargo MSRV
+      uses: actions-rs/install@v0.1
+      with:
+        crate: cargo-msrv
+        version: latest
+        use-tool-cache: true
+
+    - name: Verify minimum Rust version for the library and CLI
+      run: |
+        cargo msrv verify --path ./lib
+        cargo msrv verify --path ./cli
+
