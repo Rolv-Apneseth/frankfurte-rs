@@ -2,6 +2,7 @@
 
 [![Crates.io - Library](https://img.shields.io/crates/v/lib_frankfurter)](https://crates.io/crates/lib_frankfurter)
 [![docs.rs - Library](https://img.shields.io/docsrs/lib_frankfurter)](https://docs.rs/lib_frankfurter)
+![Version](https://img.shields.io/github/v/tag/rolv-apneseth/frankfurte-rs?label=version&color=blueviolet)
 [![AUR](https://img.shields.io/aur/version/frs)](https://aur.archlinux.org/packages/frs)
 
 Rust library and CLI to interface with any Frankfurter API.
