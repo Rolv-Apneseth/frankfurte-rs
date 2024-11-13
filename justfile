@@ -6,6 +6,7 @@ alias c := check
 alias d := develop
 alias du := docker_up
 alias dd := docker_down
+alias p := publish
 
 # List commands
 default:
@@ -42,3 +43,8 @@ docker_up:
 # Shut down the local Frankfurter API
 docker_down:
     docker compose down
+
+# Publish both the binary and library crates to crates.io
+publish: test
+    cargo publish --package lib_frankfurter
+    cargo publish --package frankfurter_cli
