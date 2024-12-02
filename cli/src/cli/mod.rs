@@ -25,7 +25,7 @@ pub struct Cli {
     #[arg(short, long, value_name = "WHEN", default_value_t = clap::ColorChoice::default(), ignore_case = true)]
     color: clap::ColorChoice,
 
-    ///  URL of the Frankfurter API which queries should be directed to, e.g. http://localhost:8080
+    ///  URL of the Frankfurter API which queries should be directed to, e.g. http://localhost:8080/v1
     ///
     /// This will override the $FRANKFURTER_URL environment variable if it is present.
     #[arg(short, long)]

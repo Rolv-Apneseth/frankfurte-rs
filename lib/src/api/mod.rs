@@ -34,7 +34,14 @@ impl Default for ServerClient {
 }
 
 impl ServerClient {
-    pub fn new(frankfurter_api_url: Url) -> Self {
+    pub fn new(mut frankfurter_api_url: Url) -> Self {
+        // Remove any number of trailing `/`
+        while frankfurter_api_url.path().ends_with('/')
+            && frankfurter_api_url.path_segments().unwrap().count() != 1
+        {
+            frankfurter_api_url.path_segments_mut().unwrap().pop();
+        }
+
         Self {
             url: frankfurter_api_url,
             client: Default::default(),
@@ -47,20 +54,26 @@ impl ServerClient {
         self
     }
 
-    /// Construct an HTTP URL base on the current hostname, optional port,
-    /// and provided endpoint.
+    /// Construct an HTTP URL with the base and the provided endpoint.
     #[inline]
     #[must_use]
-    fn url(&self, endpoint: &str) -> String {
-        format!("{}{endpoint}", self.url.as_str())
+    fn build_endpoint(&self, endpoint: &str) -> Url {
+        let mut url = self.url.clone();
+        url.path_segments_mut()
+            .expect("Couldn't get path segments")
+            .push(&endpoint.replace('/', ""));
+        url
     }
 
-    /// Makes a basic request to the API and returns true in the event of a successful response.
+    /// Makes a basic request to the root of the API and returns true in the event of a successful response.
     ///
     /// Useful for a simple check that the API is up and successfully responding to requests.
     pub async fn is_server_available(&self) -> bool {
+        let mut base_url = self.url.clone();
+        base_url.set_path("");
+
         self.client
-            .get(self.url(""))
+            .get(base_url)
             .send()
             .await
             .is_ok_and(|r| r.status().is_success())
@@ -71,7 +84,7 @@ impl ServerClient {
         let (url, query_params) = req.setup()?;
 
         self.client
-            .get(self.url(&url))
+            .get(self.build_endpoint(&url))
             .query(&query_params)
             .send()
             .await?
@@ -85,7 +98,7 @@ impl ServerClient {
         let (url, query_params) = req.setup()?;
 
         self.client
-            .get(self.url(&url))
+            .get(self.build_endpoint(&url))
             .query(&query_params)
             .send()
             .await?
@@ -99,7 +112,7 @@ impl ServerClient {
         let (url, _) = req.setup()?;
 
         self.client
-            .get(self.url(&url))
+            .get(self.build_endpoint(&url))
             .send()
             .await?
             .json::<currencies::Response>()
