@@ -19,7 +19,7 @@ services:
       retries: 10
 
   api:
-    image: hakanensari/frankfurter
+    image: lineofflight/frankfurter
     container_name: frankfurter-api
     restart: unless-stopped
     ports:
@@ -34,7 +34,7 @@ services:
     healthcheck:
       test: curl --fail http://localhost:8080 || exit 1
       interval: 1s
-      timeout: 5s
+      timeout: 10s
       retries: 10
 
 networks:
