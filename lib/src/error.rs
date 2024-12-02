@@ -18,11 +18,6 @@ pub enum Error {
     #[error("The start date ({0}) is past the latest date with exchange rates")]
     RequestLateStartDate(NaiveDate),
 
-    #[error(
-        "The requested dates ({start} and {end}) are during a single weekend, for which exchange rates are not available"
-    )]
-    RequestWeekendDates { start: NaiveDate, end: NaiveDate },
-
     /// Error from [`reqwest`], see [`reqwest::Error`].
     #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
