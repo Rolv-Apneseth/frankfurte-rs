@@ -6,7 +6,7 @@ use predicates::{
 
 fn get_cmd() -> Command {
     let mut cmd = Command::cargo_bin("frs").unwrap();
-    cmd.arg("--url=http://localhost:8080");
+    cmd.arg("--url=http://localhost:8080/v1");
     cmd
 }
 
