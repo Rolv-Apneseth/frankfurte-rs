@@ -1,6 +1,6 @@
-use std::{borrow::Cow, cmp::Ordering, collections::BTreeMap};
+use std::{borrow::Cow, collections::BTreeMap};
 
-use chrono::{Datelike, NaiveDate, TimeDelta, Timelike, Utc, Weekday};
+use chrono::{NaiveDate, TimeDelta, Timelike, Utc};
 use serde::{Deserialize, Serialize};
 
 use super::{base_build_query_params, base_ensure_valid, ServerClientRequest};
@@ -89,27 +89,11 @@ impl ServerClientRequest for Request {
         }
 
         if let Some(end_date) = self.end_date {
-            match self.start_date.cmp(&end_date) {
-                Ordering::Greater => {
-                    return Err(Error::RequestEndDateBeforeStart {
-                        start: self.start_date,
-                        end: end_date,
-                    })
-                }
-                Ordering::Equal | Ordering::Less => {
-                    match (self.start_date.weekday(), end_date.weekday()) {
-                        // Server returns error when asking for period which only spans a weekend
-                        (Weekday::Sat, Weekday::Sat)
-                        | (Weekday::Sun, Weekday::Sun)
-                        | (Weekday::Sat, Weekday::Sun) => {
-                            return Err(Error::RequestWeekendDates {
-                                start: self.start_date,
-                                end: end_date,
-                            })
-                        }
-                        _ => {}
-                    }
-                }
+            if self.start_date.gt(&end_date) {
+                return Err(Error::RequestEndDateBeforeStart {
+                    start: self.start_date,
+                    end: end_date,
+                });
             }
         }
 
@@ -185,12 +169,13 @@ mod tests_period {
             .ensure_valid()
             .is_err());
 
-        // VALID END DATE
+        // VALID END DATES
         assert!(Request::default()
             .with_end_date(NaiveDate::from_ymd_opt(2000, 2, 4).unwrap())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
+
         // Not quite weekend only - Friday-Sun
         assert!(Request::default()
             .with_start_date(NaiveDate::from_ymd_opt(2024, 8, 2).unwrap())
@@ -198,28 +183,31 @@ mod tests_period {
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
-
-        // INVALID END DATE
-        assert!(Request::default()
-            .with_end_date(NaiveDate::default().checked_sub_days(Days::new(1)).unwrap())
-            .ensure_valid()
-            .is_err());
         // Weekend only - Sat-Sun
         assert!(Request::default()
             .with_start_date(NaiveDate::from_ymd_opt(2024, 8, 3).unwrap())
             .with_end_date(NaiveDate::from_ymd_opt(2024, 8, 4).unwrap())
             .ensure_valid()
-            .is_err());
+            .inspect_err(dbg_err)
+            .is_ok());
         // Weekend only - Sat-Sat
         assert!(Request::default()
             .with_start_date(NaiveDate::from_ymd_opt(2024, 1, 13).unwrap())
             .with_end_date(NaiveDate::from_ymd_opt(2024, 1, 13).unwrap())
             .ensure_valid()
-            .is_err());
+            .inspect_err(dbg_err)
+            .is_ok());
         // Weekend only - Sun-Sun
         assert!(Request::default()
             .with_start_date(NaiveDate::from_ymd_opt(2024, 6, 23).unwrap())
             .with_end_date(NaiveDate::from_ymd_opt(2024, 6, 23).unwrap())
+            .ensure_valid()
+            .inspect_err(dbg_err)
+            .is_ok());
+
+        // INVALID END DATE
+        assert!(Request::default()
+            .with_end_date(NaiveDate::default().checked_sub_days(Days::new(1)).unwrap())
             .ensure_valid()
             .is_err());
     }
