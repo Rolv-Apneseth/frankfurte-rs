@@ -5,7 +5,7 @@ use lib_frankfurter::{
     data::{Currency, CurrencyValue},
 };
 use pretty_assertions::assert_eq;
-use shared::get_server;
+use shared::{get_invalid_server, get_server};
 
 #[tokio::test]
 async fn endpoint_period() {
@@ -63,4 +63,8 @@ async fn endpoint_period() {
         // Start -> end date (inclusive)
         (end_date.num_days_from_ce() - start_date.num_days_from_ce() + 1) as usize
     );
+
+    // ERROR RESPONSE FROM API
+    let server = get_invalid_server();
+    assert!(server.period(Default::default()).await.is_err())
 }
