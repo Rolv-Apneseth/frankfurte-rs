@@ -4,10 +4,30 @@ use predicates::{
     str::{contains, ends_with, is_match, starts_with},
 };
 
+const BIN: &str = "frs";
+
 fn get_cmd() -> Command {
-    let mut cmd = Command::cargo_bin("frs").unwrap();
+    let mut cmd = Command::cargo_bin(BIN).unwrap();
     cmd.arg("--url=http://localhost:8080/v1");
     cmd
+}
+
+#[test]
+fn test_error_response() {
+    const URL: &str = "http://localhost:8080/invalid";
+    Command::cargo_bin(BIN)
+        .unwrap()
+        .arg(format!("--url={URL}"))
+        .arg("currencies")
+        .assert()
+        .stderr(
+            contains("URL")
+                .and(contains(URL))
+                .and(contains("Status"))
+                .and(contains("404"))
+                .and(contains("Status")),
+        )
+        .failure();
 }
 
 #[test]

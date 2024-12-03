@@ -1,5 +1,5 @@
 mod shared;
-use shared::get_server;
+use shared::{get_invalid_server, get_server};
 
 #[tokio::test]
 async fn local_api_is_available() {
@@ -14,4 +14,8 @@ async fn endpoint_currencies() {
     let server = get_server();
     let res = server.currencies(Default::default()).await.unwrap();
     assert!(res.0.len() > 10);
+
+    // ERROR RESPONSE FROM API
+    let server = get_invalid_server();
+    assert!(server.currencies(Default::default()).await.is_err())
 }

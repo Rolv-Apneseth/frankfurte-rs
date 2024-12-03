@@ -5,7 +5,7 @@ use lib_frankfurter::{
     data::{Currency, CurrencyValue},
 };
 use pretty_assertions::assert_eq;
-use shared::get_server;
+use shared::{get_invalid_server, get_server};
 
 #[tokio::test]
 async fn endpoint_convert() {
@@ -39,4 +39,8 @@ async fn endpoint_convert() {
     let date = NaiveDate::from_ymd_opt(2024, 8, 20).unwrap();
     let res = make_request(convert::Request::default().with_date(date)).await;
     assert_eq!(res.date, date);
+
+    // ERROR RESPONSE FROM API
+    let server = get_invalid_server();
+    assert!(server.convert(Default::default()).await.is_err())
 }
