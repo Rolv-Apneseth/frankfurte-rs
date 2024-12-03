@@ -79,45 +79,35 @@ impl ServerClient {
             .is_ok_and(|r| r.status().is_success())
     }
 
+    /// Internal method for handling `GET` requests.
+    async fn get<Resp: for<'de> serde::Deserialize<'de>>(
+        &self,
+        req: impl ServerClientRequest,
+    ) -> Result<Resp> {
+        let (endpoint, params) = req.setup()?;
+        let resp = self
+            .client
+            .get(self.build_endpoint(&endpoint))
+            .query(&params)
+            .send()
+            .await?;
+
+        resp.json::<Resp>().await.map_err(Into::into)
+    }
+
     /// Request exchange rates for a specific date (latest by default).
     pub async fn convert(&self, req: convert::Request) -> Result<convert::Response> {
-        let (url, query_params) = req.setup()?;
-
-        self.client
-            .get(self.build_endpoint(&url))
-            .query(&query_params)
-            .send()
-            .await?
-            .json::<convert::Response>()
-            .await
-            .map_err(Into::into)
+        self.get::<convert::Response>(req).await
     }
 
     /// Request a time series of historical exchange rates.
     pub async fn period(&self, req: period::Request) -> Result<period::Response> {
-        let (url, query_params) = req.setup()?;
-
-        self.client
-            .get(self.build_endpoint(&url))
-            .query(&query_params)
-            .send()
-            .await?
-            .json::<period::Response>()
-            .await
-            .map_err(Into::into)
+        self.get::<period::Response>(req).await
     }
 
-    /// Request the supported currency codes and their full names
+    /// Request the supported currency codes and their full names.
     pub async fn currencies(&self, req: currencies::Request) -> Result<currencies::Response> {
-        let (url, _) = req.setup()?;
-
-        self.client
-            .get(self.build_endpoint(&url))
-            .send()
-            .await?
-            .json::<currencies::Response>()
-            .await
-            .map_err(Into::into)
+        self.get::<currencies::Response>(req).await
     }
 }
 
