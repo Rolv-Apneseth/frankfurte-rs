@@ -1,4 +1,5 @@
 use chrono::NaiveDate;
+use reqwest::StatusCode;
 
 use crate::data::Currency;
 
@@ -17,6 +18,13 @@ pub enum Error {
 
     #[error("The start date ({0}) is past the latest date with exchange rates")]
     RequestLateStartDate(NaiveDate),
+
+    #[error("Invalid response from the API\n  URL - {url}\n  Status - {status}\n  Body - {body}")]
+    InvalidResponse {
+        url: String,
+        status: StatusCode,
+        body: String,
+    },
 
     /// Error from [`reqwest`], see [`reqwest::Error`].
     #[error(transparent)]
