@@ -13,7 +13,7 @@ use std::borrow::Cow;
 use shared::*;
 use url::Url;
 
-use crate::error::Result;
+use crate::error::{Error, Result};
 
 /// A HTTP client for making requests to a Frankfurter API.
 #[derive(Debug)]
@@ -91,6 +91,15 @@ impl ServerClient {
             .query(&params)
             .send()
             .await?;
+
+        // Return an error in the case of a response with an error status code from the API
+        if let Err(err) = resp.error_for_status_ref() {
+            return Err(Error::InvalidResponse {
+                status: err.status().expect("Couldn't get status from response"),
+                body: resp.text().await.unwrap_or_default(),
+                url: self.build_endpoint(&endpoint).to_string(),
+            });
+        };
 
         resp.json::<Resp>().await.map_err(Into::into)
     }
