@@ -1,6 +1,6 @@
 use std::{borrow::Cow, collections::BTreeMap};
 
-use chrono::{NaiveDate, TimeDelta, Timelike, Utc};
+use chrono::{NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 
 use super::{base_build_query_params, base_ensure_valid, ServerClientRequest};
@@ -78,13 +78,7 @@ impl ServerClientRequest for Request {
     fn ensure_valid(&self) -> crate::error::Result<()> {
         base_ensure_valid(&self.base, &self.targets)?;
 
-        let mut latest = Utc::now();
-        // Reduce day by 1 if it is still earlier than the earliest exchange rate fetch at 15:00
-        if latest.time().hour() < 14 {
-            latest -= TimeDelta::days(1);
-        }
-
-        if self.start_date > latest.date_naive() {
+        if self.start_date > Utc::now().date_naive() {
             return Err(Error::RequestLateStartDate(self.start_date));
         }
 
@@ -159,17 +153,21 @@ mod tests_period {
             .inspect_err(dbg_err)
             .is_ok());
 
+        let today = Utc::now();
+        assert!(Request::default()
+            .with_start_date(today.date_naive())
+            .ensure_valid()
+            .inspect_err(dbg_err)
+            .is_ok());
+
         // INVALID START DATE
-        let tomorrow = Utc::now()
-            .checked_add_days(Days::new(1))
-            .unwrap()
-            .date_naive();
+        let tomorrow = today.checked_add_days(Days::new(1)).unwrap().date_naive();
         assert!(Request::default()
             .with_start_date(tomorrow)
             .ensure_valid()
             .is_err());
 
-        // VALID END DATES
+        // VALID END DATE
         assert!(Request::default()
             .with_end_date(NaiveDate::from_ymd_opt(2000, 2, 4).unwrap())
             .ensure_valid()
