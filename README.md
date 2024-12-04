@@ -15,13 +15,15 @@ Rust library and CLI to interface with any Frankfurter API.
 2. [Library](#library)
 3. [CLI](#cli)
 1. [Installation](#installation)
-    1. [Cargo](#cargo)
-    2. [AUR](#aur)
+    - [Cargo](#cargo)
+    - [AUR](#aur)
 2. [Usage](#usage)
 3. [Self-hosting](#self-hosting)
-4. [Related Projects](#related-projects)
-5. [Credit](#credit)
-6. [Licence](#licence)
+4. [Contributing](#contributing)
+    - [Suggested workflow](#suggested-workflow)
+5. [Related Projects](#related-projects)
+6. [Credit](#credit)
+7. [Licence](#licence)
 
 ## About
 
@@ -29,7 +31,7 @@ Frankfurte-rs (Frankfurters) is available as both an **executable** (`frs`) and 
 with the hope of providing safe and correct bindings for the API.
 
 > [!NOTE]
-> While the Frankfurter API works well most of the time, there are many edge cases and the returned
+> While the Frankfurter API works well most of the time, there are some edge cases and the returned
 > errors are not exactly informative. If you run into any problems while using these bindings, please open
 > an issue with the details of the error encountered.
 
@@ -88,6 +90,21 @@ To set up and use a self-hosted version of the API, follow these steps:
 3. When running commands, specify the desired API URL using either the `--url` flag or the `FRANKFURTER_URL` environment variable:
     - `frs --url http://localhost:8080/v1`
     - `FRANKFURTER_URL="http://localhost:8080/v1 frs`
+
+## Contributing
+
+Contributions of any kind are welcome. Feel free to fork the repo, follow the suggested workflow below, commit your changes and open a pull request.
+
+This project uses [just](https://github.com/casey/just), but if you wish to avoid installing that, you can find the individual commands in the [justfile](./justfile).
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you shall be licensed as in [LICENSE](./LICENSE), without any additional terms or conditions.
+
+### Suggested workflow
+
+1. Make your changes
+2. Ensure your changes do what you intend by adding tests. Use `just develop` to run the tests every time you make a change (just remember to take down the docker containers down afterwards with `just docker_down`), or `just test` to run them once.
+    - If your changes are for the CLI you can also check manually by running `cargo run -- -d {args here}`.
+3. Format and lint your code (requires the nightly Rust toolchain) with `just format`
 
 ## Related Projects
 
