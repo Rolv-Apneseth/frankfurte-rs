@@ -16,9 +16,10 @@ default:
 check:
     cargo check --all
 
-# Format
-format: check
+# Format and lint
+format:
     cargo +nightly fmt
+    cargo clippy --all -- -D warnings 
 
 # Test
 test: docker_up && docker_down
