@@ -6,7 +6,7 @@
 [![AUR](https://img.shields.io/aur/version/frs)](https://aur.archlinux.org/packages/frs)
 
 Rust library and CLI to interface with any Frankfurter API.
-> *[Frankfurter](https://github.com/hakanensari/frankfurter) is a free, open source and [self-hostable](https://hub.docker.com/r/hakanensari/frankfurter) currency exchange rate API.
+> *[Frankfurter](https://github.com/lineofflight/frankfurter) is a free, open source and [self-hostable](https://hub.docker.com/r/lineofflight/frankfurter) currency exchange rate API.
 > It is based on [data sets](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html) published by the European Central Bank.*
 
 ## Table of Contents
@@ -81,15 +81,15 @@ View the full usage with `frs --help`.
 
 ### Self-hosting
 
-A public, free-to-use version of the API is available [here](https://api.frankfurter.app/), and will be used by default. However, this repo comes with a [docker-compose.yml](./docker-compose.yml) for easy self-hosting of the `Frankfurter` API.
+A public, free-to-use version of the API is available [here](https://api.frankfurter.dev/), and will be used by default. However, this repo comes with a [docker-compose.yml](./docker-compose.yml) for easy and convenient self-hosting of the `Frankfurter` API.
 
 To set up and use a self-hosted version of the API, follow these steps:
 
 1. Copy/clone the `docker-compose.yml` file to your system
-2. Run `docker compose up -d --wait` to start up both the `postgresql` database and the `Frankfurter` API itself locally using Docker
+2. Run `docker compose up -d --wait` to start up the `Frankfurter` API, which includes a `SQLite` database, locally using Docker
 3. When running commands, specify the desired API URL using either the `--url` flag or the `FRANKFURTER_URL` environment variable:
-    - `frs --url http://localhost:8080/v1`
-    - `FRANKFURTER_URL="http://localhost:8080/v1 frs`
+    - `frs --url http://localhost:8080`
+    - `FRANKFURTER_URL="http://localhost:8080 frs`
 
 ## Contributing
 
@@ -102,7 +102,7 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 ### Suggested workflow
 
 1. Make your changes
-2. Ensure your changes do what you intend by adding tests. Use `just develop` to run the tests every time you make a change (just remember to take down the docker containers down afterwards with `just docker_down`), or `just test` to run them once.
+2. Ensure your changes do what you intend by adding tests. Use `just develop` to run the tests every time you make a change, or `just test` to run them once.
     - If your changes are for the CLI you can also check manually by running `cargo run -- -d {args here}`.
 3. Format and lint your code (requires the nightly Rust toolchain) with `just format`
 
@@ -112,7 +112,7 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 
 ## Credit
 
-- [Frankfurter](https://github.com/hakanensari/frankfurter) of course, for be the underlying API that this project wraps
+- [Frankfurter](https://github.com/lineofflight/frankfurter) of course, for be the underlying API that this project wraps
 - [LanguageTool-Rust](https://github.com/jeertmans/languagetool-rust) for inspiration and a look at how Rust API bindings should look/function
 
 ## Licence  

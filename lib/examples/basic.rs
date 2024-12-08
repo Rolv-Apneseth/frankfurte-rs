@@ -9,7 +9,7 @@ use url::Url;
 
 #[tokio::main]
 async fn main() {
-    let server_client: ServerClient = Url::parse("http://localhost:8080/v1")
+    let server_client: ServerClient = Url::parse("http://localhost:8080")
         .map(ServerClient::new)
         .unwrap_or_default();
 

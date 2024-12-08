@@ -26,7 +26,7 @@ pub struct ServerClient {
 impl Default for ServerClient {
     fn default() -> Self {
         Self {
-            url: Url::parse("https://api.frankfurter.app")
+            url: Url::parse("https://api.frankfurter.dev/v1")
                 .expect("Invalid fallback Frankfurter API URL"),
             client: Default::default(),
         }
@@ -41,6 +41,9 @@ impl ServerClient {
         {
             frankfurter_api_url.path_segments_mut().unwrap().pop();
         }
+
+        // Append `/v1` to use correct version of the API
+        frankfurter_api_url.path_segments_mut().unwrap().push("v1");
 
         Self {
             url: frankfurter_api_url,
