@@ -413,7 +413,7 @@ dependencies = [
 
 [[package]]
 name = "frankfurter_cli"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -854,7 +854,7 @@ dependencies = [
 
 [[package]]
 name = "lib_frankfurter"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "chrono",
  "enum_dispatch",
