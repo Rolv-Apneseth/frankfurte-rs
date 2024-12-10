@@ -1,3 +1,6 @@
+//! [`Request`] and [`Response`] types for requesting historical exchange rates for a
+//! given time period.
+
 use std::{borrow::Cow, collections::BTreeMap};
 
 use chrono::{NaiveDate, Utc};

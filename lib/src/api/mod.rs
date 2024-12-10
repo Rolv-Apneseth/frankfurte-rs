@@ -1,7 +1,4 @@
-//! Bindings to the Frankfurter API
-//!
-//! The current bindings were generated using the
-//! [HTTP API documentation](https://frankfurter.dev/).
+//! Interface to the Frankfurter API.
 
 pub mod convert;
 pub mod currencies;
@@ -112,21 +109,23 @@ impl ServerClient {
         self.get::<convert::Response>(req).await
     }
 
-    /// Request a time series of historical exchange rates.
+    /// Request historical exchange rates for a given time period.
     pub async fn period(&self, req: period::Request) -> Result<period::Response> {
         self.get::<period::Response>(req).await
     }
 
-    /// Request the supported currency codes and their full names.
+    /// Request the latest supported currency codes and their full names.
     pub async fn currencies(&self, req: currencies::Request) -> Result<currencies::Response> {
         self.get::<currencies::Response>(req).await
     }
 }
 
+/// An endpoint's URL.
 pub type EndpointUrl = Cow<'static, str>;
+/// Query parameters to be passed to an endpoint.
 pub type QueryParams = Vec<(&'static str, String)>;
 
-/// Utility trait to provide a common interface for server client requests.
+/// Utility trait to provide a common interface for requests.
 pub trait ServerClientRequest {
     fn get_url(&self) -> EndpointUrl;
     fn ensure_valid(&self) -> Result<()>;
