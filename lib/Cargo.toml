@@ -17,7 +17,7 @@ strum = { workspace = true }
 url = { workspace = true }
 reqwest = { version = "0.12.8", features = ["json"] }
 serde = { version = "^1.0", features = ["derive"] }
-thiserror = { version = "1.0.64" }
+thiserror = { version = "2.0.6" }
 
 [dev-dependencies]
 tokio = { workspace = true }
