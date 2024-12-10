@@ -8,7 +8,7 @@ use comfy_table::{
 };
 use lib_frankfurter::{
     api::{self, ServerClient},
-    data::{Currency, CurrencyValue},
+    Currency, CurrencyValue,
 };
 use termcolor::StandardStream;
 

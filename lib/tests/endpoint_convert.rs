@@ -1,9 +1,6 @@
 mod shared;
 use chrono::NaiveDate;
-use lib_frankfurter::{
-    api::convert,
-    data::{Currency, CurrencyValue},
-};
+use lib_frankfurter::{api::convert, Currency, CurrencyValue};
 use pretty_assertions::assert_eq;
 use shared::{get_invalid_server, get_server};
 

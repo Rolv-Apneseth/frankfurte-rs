@@ -1,11 +1,8 @@
-extern crate reqwest;
-extern crate serde_json;
-extern crate tokio;
-extern crate url;
-
-use chrono::NaiveDate;
-use lib_frankfurter::api::{convert, currencies, period, ServerClient};
-use url::Url;
+use lib_frankfurter::{
+    api::{convert, currencies, period, ServerClient},
+    chrono::NaiveDate,
+    url::Url,
+};
 
 #[tokio::main]
 async fn main() {
@@ -13,7 +10,7 @@ async fn main() {
         .map(ServerClient::new)
         .unwrap_or_default();
 
-    // Fetch currencies - this request does not accept any additional options
+    // Fetch supported currencies - this request does not accept any additional options
     match server_client
         .currencies(currencies::Request::default())
         .await

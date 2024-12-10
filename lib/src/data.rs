@@ -75,7 +75,7 @@ impl Default for Currency {
     }
 }
 
-/// Value of a currency.
+/// Value of a currency. Simple wrapper around an [`f64`].
 ///
 /// This is a wrapper around [`f64`] to ensure that values are rounded to 2 decimal places.
 #[derive(Clone, Copy, PartialEq, PartialOrd, Debug, Deserialize, Serialize)]

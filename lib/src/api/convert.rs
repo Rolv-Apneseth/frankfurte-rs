@@ -1,3 +1,5 @@
+//! [`Request`] and [`Response`] types for requesting exchange rates for a specific date (latest by default).
+
 use std::borrow::Cow;
 
 use chrono::NaiveDate;

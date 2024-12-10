@@ -1,3 +1,6 @@
+//! [`Request`] and [`Response`] types for requesting the latest supported currency codes and their
+//! names.
+
 use std::{borrow::Cow, collections::BTreeMap};
 
 use serde::{Deserialize, Serialize};
