@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use chrono::NaiveDate;
+use chrono::{NaiveDate, Utc};
 use clap::Parser;
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL_CONDENSED, Cell, CellAlignment, Color,
@@ -16,27 +16,29 @@ use super::{utils::if_supports_colour, ExecuteSubcommand, SubcommandBaseModifier
 
 #[derive(Debug, Parser)]
 pub struct Command {
-    /// Base currency to convert FROM, e.g. EUR
-    #[arg(ignore_case = true, index = 1)]
+    /// Base currency to convert FROM
+    #[arg(ignore_case = true, index = 1, default_value_t)]
     base: Currency,
 
     /// Target currencies to convert TO, e.g. USD,AUD
-    #[arg(ignore_case = true, short = 't', long, value_delimiter = ',')]
+    #[arg(ignore_case = true, index = 2, value_delimiter = ',')]
     targets: Vec<Currency>,
 
-    /// A number representing the amount of the base currency to show exchange rates for (default = 1)
-    #[arg(short = 'a', long)]
+    /// A number representing the amount of the base currency to show exchange rates for [default: 1]
+    #[arg(short = 'a', long, default_value = "1", next_line_help(true))]
     amount: Option<CurrencyValue>,
 
-    /// The start date for the time period to fetch exchange rates for.
-    ///
-    /// Dates should be written in the form `yyyy-mm-dd`
-    #[arg(index = 2)]
-    start: NaiveDate,
-    /// Date for exchange rates, in the form `yyyy-mm-dd`.
-    ///
-    /// If not specified, this will default to the latest available date.
-    #[arg(index = 3)]
+    /// The start date to fetch exchange rates for [form: yyyy-mm-dd, alias: from, default: today]
+    #[arg(long, short = 's', alias = "from", next_line_help(true))]
+    start: Option<NaiveDate>,
+    /// The end date to fetch exchange rates for [form: yyyy-mm-dd, alias: to, default: today]
+    #[arg(
+        long,
+        short = 'e',
+        alias = "to",
+        requires("start"),
+        next_line_help(true)
+    )]
     end: Option<NaiveDate>,
 
     #[command(flatten)]
@@ -49,7 +51,7 @@ impl From<&Command> for api::period::Request {
             amount: value.amount,
             base: Some(value.base.clone()),
             targets: Some(value.targets.clone()),
-            start_date: value.start,
+            start_date: value.start.unwrap_or_else(|| Utc::now().date_naive()),
             end_date: value.end,
         }
     }

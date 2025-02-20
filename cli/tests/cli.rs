@@ -109,12 +109,22 @@ fn test_convert_amount() {
 #[test]
 fn test_period_basic() {
     get_cmd()
-        .args(["period", "EUR", "2024-10-10"])
+        .args(["period", "EUR"])
+        .assert()
+        .stdout(contains("AUD").and(contains("USD")).and(contains("GBP")))
+        .success();
+}
+
+#[test]
+fn test_period_start() {
+    get_cmd()
+        .args(["period", "EUR", "--start", "2024-10-10"])
         .assert()
         .stdout(
             contains("2024-10-10")
                 .and(contains("2024-10-11"))
                 .and(contains("2024-11-05"))
+                .and(contains("2025-01-06"))
                 .and(contains("AUD"))
                 .and(contains("USD"))
                 .and(contains("GBP")),
@@ -125,7 +135,7 @@ fn test_period_basic() {
 #[test]
 fn test_period_end_date() {
     get_cmd()
-        .args(["period", "EUR", "2020-5-12", "2020-5-13"])
+        .args(["period", "EUR", "-s", "2020-5-12", "-e", "2020-5-13"])
         .assert()
         .stdout(
             contains("2020-05-12")
