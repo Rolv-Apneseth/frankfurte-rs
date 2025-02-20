@@ -1,6 +1,5 @@
-use std::{io::Write, mem};
+use std::io::Write;
 
-use anyhow::anyhow;
 use chrono::NaiveDate;
 use clap::Parser;
 use comfy_table::{
@@ -35,10 +34,6 @@ pub struct Command {
     #[arg(short = 'd', long)]
     date: Option<NaiveDate>,
 
-    /// Reverse the order of the target / base currencies
-    #[arg(short = 'R', long, action)]
-    reverse: bool,
-
     #[command(flatten)]
     modifiers: SubcommandBaseModifiers,
 }
@@ -61,20 +56,10 @@ impl From<Command> for api::convert::Request {
 impl ExecuteSubcommand for Command {
     /// Executes the `convert` subcommand.
     async fn execute(
-        mut self,
+        self,
         server_client: ServerClient,
         mut stdout: StandardStream,
     ) -> anyhow::Result<()> {
-        if self.reverse {
-            if self.targets.len() > 1 {
-                return Err(anyhow!(
-                    "Reversing is not valid when more than one target is specified. Try using just one target."
-                ));
-            }
-
-            mem::swap(&mut self.base, &mut self.targets[0]);
-        }
-
         let SubcommandBaseModifiers { json, raw } = self.modifiers;
         let response = server_client.convert(self.into()).await?;
 
