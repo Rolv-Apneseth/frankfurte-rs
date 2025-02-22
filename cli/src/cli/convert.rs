@@ -1,6 +1,5 @@
 use std::io::Write;
 
-use chrono::NaiveDate;
 use clap::Parser;
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL_CONDENSED, Cell, CellAlignment, Color,
@@ -8,7 +7,7 @@ use comfy_table::{
 };
 use lib_frankfurter::{
     api::{self, ServerClient},
-    Currency, CurrencyValue,
+    Currency, CurrencyValue, ValidDate,
 };
 use termcolor::StandardStream;
 
@@ -33,9 +32,9 @@ pub struct Command {
     #[arg(short = 'a', long)]
     amount: Option<CurrencyValue>,
 
-    /// Date for exchange rates [form: yyyy-mm-dd, default: today]
+    /// Date for exchange rates [form: yyyy-mm-dd, min: 1999-01-04, default: today]
     #[arg(short = 'd', long)]
-    date: Option<NaiveDate>,
+    date: Option<ValidDate>,
 
     #[command(flatten)]
     modifiers: SubcommandBaseModifiers,

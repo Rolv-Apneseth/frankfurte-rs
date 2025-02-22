@@ -91,7 +91,7 @@ mod tests_shared {
 
         // INDIVIDUAL
         assert_eq!(
-            base_build_query_params(&Some(CurrencyValue::from(10.0)), &None, &None),
+            base_build_query_params(&Some(CurrencyValue::try_from(10.0).unwrap()), &None, &None),
             vec![("amount", String::from("10.00"))]
         );
         assert_eq!(
@@ -106,7 +106,7 @@ mod tests_shared {
         // COMBOS
         assert_eq!(
             base_build_query_params(
-                &Some(CurrencyValue::from(1000000.0)),
+                &Some(CurrencyValue::try_from(1000000.0).unwrap()),
                 &Some(Currency::USD),
                 &Some(vec![Currency::CNY, Currency::CZK, Currency::IDR])
             ),
@@ -129,18 +129,18 @@ mod tests_shared {
         );
         assert_eq!(
             base_build_query_params(
-                &Some(CurrencyValue::from(1000000.0)),
+                &Some(CurrencyValue::MIN),
                 &None,
                 &Some(vec![Currency::CNY, Currency::CZK, Currency::IDR])
             ),
             vec![
-                ("amount", String::from("1000000.00")),
+                ("amount", (*CurrencyValue::MIN).to_string()),
                 ("symbols", String::from("CNY,CZK,IDR")),
             ]
         );
         assert_eq!(
             base_build_query_params(
-                &Some(CurrencyValue::from(1000000.0)),
+                &Some(CurrencyValue::try_from(1000000.0).unwrap()),
                 &Some(Currency::USD),
                 &None
             ),

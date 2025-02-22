@@ -1,6 +1,8 @@
 mod shared;
+use std::str::FromStr;
+
 use chrono::{Datelike, NaiveDate};
-use lib_frankfurter::{api::period, Currency, CurrencyValue};
+use lib_frankfurter::{api::period, Currency, CurrencyValue, ValidDate};
 use pretty_assertions::assert_eq;
 use shared::{get_invalid_server, get_server};
 
@@ -8,22 +10,19 @@ use shared::{get_invalid_server, get_server};
 async fn endpoint_period() {
     let server = get_server();
     let make_request = |request: period::Request| async { server.period(request).await.unwrap() };
-    // The latest date with available data
-    let earliest_data = NaiveDate::from_ymd_opt(1999, 1, 4).unwrap();
 
     // BASIC
-    // Note that this request will use the default `NaiveDate` of 1st Jan, 1970
     let res = make_request(Default::default()).await;
-    assert_eq!(res.start_date, earliest_data);
+    assert_eq!(res.start_date, ValidDate::min());
     assert_eq!(res.base, Currency::EUR);
     // Shouldn't include the base currency and the fallback currency
     assert!(res.rates.last_key_value().unwrap().1.len() > 10);
-    assert_eq!(res.amount, CurrencyValue::from(1.0));
+    assert_eq!(res.amount, CurrencyValue::try_from(1.0).unwrap());
     assert!(res.rates.len() > 1000);
 
     // BASE CURRENCY AND AMOUNT
     let base = Currency::KRW;
-    let amount = CurrencyValue::from(10.0);
+    let amount = CurrencyValue::try_from(10.0).unwrap();
     let res = make_request(
         period::Request::default()
             .with_base(base.clone())
@@ -39,14 +38,14 @@ async fn endpoint_period() {
     assert_eq!(res.rates.last_key_value().unwrap().1.len(), targets.len());
 
     // STARTING DATE
-    let start_date = NaiveDate::from_ymd_opt(2020, 10, 5).unwrap();
+    let start_date = ValidDate::try_from(NaiveDate::from_ymd_opt(2020, 10, 5).unwrap()).unwrap();
     let res = make_request(period::Request::default().with_start_date(start_date)).await;
     assert_eq!(res.start_date, start_date);
     assert!(res.rates.len() > 200);
 
     // STARTING AND END DATES
-    let start_date = NaiveDate::from_ymd_opt(2024, 10, 7).unwrap();
-    let end_date = NaiveDate::from_ymd_opt(2024, 10, 11).unwrap();
+    let start_date = ValidDate::from_str("2024-10-07").unwrap();
+    let end_date = ValidDate::from_str("2024-10-11").unwrap();
     let res = make_request(
         period::Request::default()
             .with_start_date(start_date)

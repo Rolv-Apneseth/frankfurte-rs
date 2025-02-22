@@ -1,6 +1,5 @@
 use std::io::Write;
 
-use chrono::{NaiveDate, Utc};
 use clap::Parser;
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL_CONDENSED, Cell, CellAlignment, Color,
@@ -8,7 +7,7 @@ use comfy_table::{
 };
 use lib_frankfurter::{
     api::{self, ServerClient},
-    Currency, CurrencyValue,
+    Currency, CurrencyValue, ValidDate,
 };
 use termcolor::StandardStream;
 
@@ -30,7 +29,7 @@ pub struct Command {
 
     /// The start date to fetch exchange rates for [form: yyyy-mm-dd, alias: from, default: today]
     #[arg(long, short = 's', alias = "from", next_line_help(true))]
-    start: Option<NaiveDate>,
+    start: Option<ValidDate>,
     /// The end date to fetch exchange rates for [form: yyyy-mm-dd, alias: to, default: today]
     #[arg(
         long,
@@ -39,7 +38,7 @@ pub struct Command {
         requires("start"),
         next_line_help(true)
     )]
-    end: Option<NaiveDate>,
+    end: Option<ValidDate>,
 
     #[command(flatten)]
     modifiers: SubcommandBaseModifiers,
@@ -51,7 +50,7 @@ impl From<&Command> for api::period::Request {
             amount: value.amount,
             base: Some(value.base.clone()),
             targets: Some(value.targets.clone()),
-            start_date: value.start.unwrap_or_else(|| Utc::now().date_naive()),
+            start_date: value.start.unwrap_or_else(ValidDate::max),
             end_date: value.end,
         }
     }

@@ -3,13 +3,13 @@
 
 use std::{borrow::Cow, collections::BTreeMap};
 
-use chrono::{NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 
 use super::{base_build_query_params, base_ensure_valid, ServerClientRequest};
 use crate::{
     data::{Currency, CurrencyValue, CurrencyValueMap},
     error::Error,
+    ValidDate,
 };
 
 /// Response for fetching the latest exchange rates.
@@ -20,11 +20,11 @@ pub struct Response {
     /// Amount of the base currency being compared
     pub amount: CurrencyValue,
     /// Start date representation in the form `yyyy-mm-dd`
-    pub start_date: NaiveDate,
+    pub start_date: ValidDate,
     /// End date representation in the form `yyyy-mm-dd`
-    pub end_date: Option<NaiveDate>,
+    pub end_date: Option<ValidDate>,
     /// Map of dates to currency exchange maps
-    pub rates: BTreeMap<NaiveDate, CurrencyValueMap>,
+    pub rates: BTreeMap<ValidDate, CurrencyValueMap>,
 }
 
 /// Request query parameters for fetching the latest exchange rates.
@@ -33,8 +33,8 @@ pub struct Request {
     pub amount: Option<CurrencyValue>,
     pub base: Option<Currency>,
     pub targets: Option<Vec<Currency>>,
-    pub start_date: NaiveDate,
-    pub end_date: Option<NaiveDate>,
+    pub start_date: ValidDate,
+    pub end_date: Option<ValidDate>,
 }
 
 impl Request {
@@ -57,13 +57,13 @@ impl Request {
     }
 
     /// Consumes the [`Request`] and returns a new one with the given start date.
-    pub fn with_start_date(mut self, date: NaiveDate) -> Self {
+    pub fn with_start_date(mut self, date: ValidDate) -> Self {
         self.start_date = date;
         self
     }
 
     /// Consumes the [`Request`] and returns a new one with the given end date.
-    pub fn with_end_date(mut self, date: NaiveDate) -> Self {
+    pub fn with_end_date(mut self, date: ValidDate) -> Self {
         self.end_date = Some(date);
         self
     }
@@ -80,10 +80,6 @@ impl ServerClientRequest for Request {
 
     fn ensure_valid(&self) -> crate::error::Result<()> {
         base_ensure_valid(&self.base, &self.targets)?;
-
-        if self.start_date > Utc::now().date_naive() {
-            return Err(Error::RequestLateStartDate(self.start_date));
-        }
 
         if let Some(end_date) = self.end_date {
             if self.start_date.gt(&end_date) {
@@ -104,7 +100,8 @@ impl ServerClientRequest for Request {
 
 #[cfg(test)]
 mod tests_period {
-    use chrono::Days;
+    use std::str::FromStr;
+
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -114,23 +111,23 @@ mod tests_period {
     fn get_url() {
         assert_eq!(
             Request::default().get_url(),
-            format!("{}..", NaiveDate::default())
+            format!("{}..", ValidDate::default())
         );
 
-        let date = NaiveDate::from_ymd_opt(2000, 7, 2).unwrap();
+        let date = ValidDate::from_str("2000-7-2").unwrap();
         assert_eq!(
             Request::default().with_start_date(date).get_url(),
             format!("{date}..")
         );
 
-        let date = NaiveDate::from_ymd_opt(2020, 8, 9).unwrap();
+        let date = ValidDate::from_str("2020-8-9").unwrap();
         assert_eq!(
             Request::default().with_end_date(date).get_url(),
-            format!("{}..{date}", NaiveDate::default())
+            format!("{}..{date}", ValidDate::default())
         );
 
-        let start_date = NaiveDate::from_ymd_opt(2020, 8, 9).unwrap();
-        let end_date = NaiveDate::from_ymd_opt(2020, 10, 9).unwrap();
+        let start_date = ValidDate::from_str("2020-8-9").unwrap();
+        let end_date = ValidDate::from_str("2020-10-9").unwrap();
         assert_eq!(
             Request::default()
                 .with_start_date(start_date)
@@ -151,64 +148,57 @@ mod tests_period {
 
         // VALID START DATE
         assert!(Request::default()
-            .with_start_date(NaiveDate::default())
+            .with_start_date(ValidDate::default())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
 
-        let today = Utc::now();
         assert!(Request::default()
-            .with_start_date(today.date_naive())
+            .with_start_date(ValidDate::max())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
-
-        // INVALID START DATE
-        let tomorrow = today.checked_add_days(Days::new(1)).unwrap().date_naive();
-        assert!(Request::default()
-            .with_start_date(tomorrow)
-            .ensure_valid()
-            .is_err());
 
         // VALID END DATE
         assert!(Request::default()
-            .with_end_date(NaiveDate::from_ymd_opt(2000, 2, 4).unwrap())
+            .with_end_date(ValidDate::from_str("2000-02-04").unwrap())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
 
         // Not quite weekend only - Friday-Sun
         assert!(Request::default()
-            .with_start_date(NaiveDate::from_ymd_opt(2024, 8, 2).unwrap())
-            .with_end_date(NaiveDate::from_ymd_opt(2024, 8, 4).unwrap())
+            .with_start_date(ValidDate::from_str("2024-08-02").unwrap())
+            .with_end_date(ValidDate::from_str("2024-08-04").unwrap())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
         // Weekend only - Sat-Sun
         assert!(Request::default()
-            .with_start_date(NaiveDate::from_ymd_opt(2024, 8, 3).unwrap())
-            .with_end_date(NaiveDate::from_ymd_opt(2024, 8, 4).unwrap())
+            .with_start_date(ValidDate::from_str("2024-08-03").unwrap())
+            .with_end_date(ValidDate::from_str("2024-08-04").unwrap())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
         // Weekend only - Sat-Sat
         assert!(Request::default()
-            .with_start_date(NaiveDate::from_ymd_opt(2024, 1, 13).unwrap())
-            .with_end_date(NaiveDate::from_ymd_opt(2024, 1, 13).unwrap())
+            .with_start_date(ValidDate::from_str("2024-01-13").unwrap())
+            .with_end_date(ValidDate::from_str("2024-01-13").unwrap())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
         // Weekend only - Sun-Sun
         assert!(Request::default()
-            .with_start_date(NaiveDate::from_ymd_opt(2024, 6, 23).unwrap())
-            .with_end_date(NaiveDate::from_ymd_opt(2024, 6, 23).unwrap())
+            .with_start_date(ValidDate::from_str("2024-06-23").unwrap())
+            .with_end_date(ValidDate::from_str("2024-06-23").unwrap())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
 
         // INVALID END DATE
         assert!(Request::default()
-            .with_end_date(NaiveDate::default().checked_sub_days(Days::new(1)).unwrap())
+            .with_start_date(ValidDate::from_str("2024-06-23").unwrap())
+            .with_end_date(ValidDate::from_str("2024-06-22").unwrap())
             .ensure_valid()
             .is_err());
     }
