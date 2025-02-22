@@ -2,11 +2,10 @@
 
 use std::borrow::Cow;
 
-use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
 use super::{base_build_query_params, base_ensure_valid, ServerClientRequest};
-use crate::data::{Currency, CurrencyValue, CurrencyValueMap};
+use crate::data::{Currency, CurrencyValue, CurrencyValueMap, ValidDate};
 
 /// Response for fetching the latest exchange rates.
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -17,7 +16,7 @@ pub struct Response {
     /// Amount of the base currency which was exchanged.
     pub amount: CurrencyValue,
     /// Date of the exchange rate used.
-    pub date: NaiveDate,
+    pub date: ValidDate,
     /// Map of the currencies to their respective exchanged values.
     pub rates: CurrencyValueMap,
 }
@@ -32,7 +31,7 @@ pub struct Request {
     /// Amount of the base currency to be exchanged.
     pub amount: Option<CurrencyValue>,
     /// Date of the exchange rate(s) to be used.
-    pub date: Option<NaiveDate>,
+    pub date: Option<ValidDate>,
 }
 
 impl Request {
@@ -55,7 +54,7 @@ impl Request {
     }
 
     /// Consumes the [`Request`] and returns a new one with the given date.
-    pub fn with_date(mut self, date: NaiveDate) -> Self {
+    pub fn with_date(mut self, date: ValidDate) -> Self {
         self.date = Some(date);
         self
     }
@@ -81,17 +80,17 @@ impl ServerClientRequest for Request {
 
 #[cfg(test)]
 mod tests_convert {
-    use chrono::{Days, Utc};
+    use chrono::NaiveDate;
     use pretty_assertions::assert_eq;
 
     use super::*;
     use crate::api::test_utils::dbg_err;
 
     #[test]
-    fn get_url() {
+    fn test_get_url() {
         assert_eq!(Request::default().get_url(), "latest");
 
-        let date = NaiveDate::from_ymd_opt(2000, 7, 2).unwrap();
+        let date = ValidDate::try_from(NaiveDate::from_ymd_opt(2000, 7, 2).unwrap()).unwrap();
         assert_eq!(
             Request::default().with_date(date).get_url(),
             format!("{date}")
@@ -99,7 +98,7 @@ mod tests_convert {
     }
 
     #[test]
-    fn ensure_valid() {
+    fn test_ensure_valid() {
         // Check that [`super::base_ensure_valid`] is being called
         assert!(Request::default()
             .with_base(Currency::EUR)
@@ -109,24 +108,14 @@ mod tests_convert {
 
         // VALID DATE
         assert!(Request::default()
-            .with_date(NaiveDate::default())
+            .with_date(ValidDate::max())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());
 
-        // Will just use an earlier date
-        let tomorrow = Utc::now()
-            .checked_add_days(Days::new(1))
-            .unwrap()
-            .date_naive();
-        assert!(Request::default()
-            .with_date(tomorrow)
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
         // Weekend - will just use the closest date with data
         assert!(Request::default()
-            .with_date(NaiveDate::from_ymd_opt(2024, 2, 3).unwrap())
+            .with_date(ValidDate::try_from(NaiveDate::from_ymd_opt(2024, 2, 3).unwrap()).unwrap())
             .ensure_valid()
             .inspect_err(dbg_err)
             .is_ok());

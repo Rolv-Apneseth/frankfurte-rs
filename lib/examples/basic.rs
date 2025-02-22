@@ -1,7 +1,9 @@
+use std::str::FromStr;
+
 use lib_frankfurter::{
     api::{convert, currencies, period, ServerClient},
-    chrono::NaiveDate,
     url::Url,
+    ValidDate,
 };
 
 #[tokio::main]
@@ -32,7 +34,7 @@ async fn main() {
     // Fetch exchange rates from 01/01/2024 to the present date - for available options, check out [`period::Request`]
     match server_client
         .period(period::Request {
-            start_date: NaiveDate::from_ymd_opt(2024, 1, 1).unwrap(),
+            start_date: ValidDate::from_str("2024-01-01").unwrap(),
             ..Default::default()
         })
         .await

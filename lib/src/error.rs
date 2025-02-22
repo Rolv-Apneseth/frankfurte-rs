@@ -1,7 +1,6 @@
-use chrono::NaiveDate;
 use reqwest::StatusCode;
 
-use crate::data::Currency;
+use crate::{data::Currency, CurrencyValue, ValidDate};
 
 /// [`std::result::Result`] wrapper for convenience.
 pub(super) type Result<T> = std::result::Result<T, Error>;
@@ -16,10 +15,21 @@ pub enum Error {
     },
 
     #[error("Provided end date ({end}) is before the start date ({start})")]
-    RequestEndDateBeforeStart { start: NaiveDate, end: NaiveDate },
+    RequestEndDateBeforeStart { start: ValidDate, end: ValidDate },
 
-    #[error("The start date ({0}) is past the latest date with exchange rates")]
-    RequestLateStartDate(NaiveDate),
+    #[error(
+        "Invalid currency value ({0}), must be a valid number between {min} and {max}",
+        min = *CurrencyValue::MIN,
+        max = *CurrencyValue::MAX
+    )]
+    InvalidCurrencyValue(String),
+
+    #[error(
+        "Invalid date provided ({0}), must be a valid date in the form yyyy-mm-dd between {min} and {max}",
+        min = ValidDate::min().format("%Y-%m-%d"),
+        max = ValidDate::max().format("%Y-%m-%d"),
+    )]
+    InvalidDate(String),
 
     #[error("Invalid response from the API\n  URL - {url}\n  Status - {status}\n  Body - {body}")]
     InvalidResponse {
