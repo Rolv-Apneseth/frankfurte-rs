@@ -11,7 +11,7 @@ use termcolor::StandardStream;
 use super::{ExecuteSubcommand, SubcommandBaseModifiers};
 use crate::cli::utils::if_supports_colour;
 
-/// List the supported currency codes and their full names
+/// Fetch the latest supported currency codes and their full names
 #[derive(Debug, Parser)]
 pub struct Command {
     #[command(flatten)]
