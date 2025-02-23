@@ -1,8 +1,9 @@
-use crate::shared::get_cmd;
 use predicates::{
     prelude::PredicateBooleanExt,
     str::{contains, ends_with, is_match, starts_with},
 };
+
+use crate::shared::get_cmd;
 
 pub(super) const COMMAND: &str = "currencies";
 

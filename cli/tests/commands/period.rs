@@ -1,10 +1,11 @@
-use crate::shared::get_cmd;
+use std::str::FromStr;
+
 use chrono::Days;
 use lib_frankfurter::ValidDate;
 use predicates::{prelude::PredicateBooleanExt, str::contains};
-use std::str::FromStr;
 
 use super::INVALID_DATES;
+use crate::shared::get_cmd;
 
 pub(super) const COMMAND: &str = "period";
 

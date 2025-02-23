@@ -170,8 +170,9 @@ impl Deref for CurrencyValue {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use proptest::proptest;
+
+    use super::*;
 
     #[test]
     fn test_currency_value_validity_checked_on_creation() {
