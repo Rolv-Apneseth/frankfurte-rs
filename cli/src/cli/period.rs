@@ -13,6 +13,7 @@ use termcolor::StandardStream;
 
 use super::{utils::if_supports_colour, ExecuteSubcommand, SubcommandBaseModifiers};
 
+/// Fetch exchange rates between currencies over a given time period
 #[derive(Debug, Parser)]
 pub struct Command {
     /// Base currency to convert FROM
