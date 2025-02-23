@@ -31,15 +31,14 @@ Frankfurte-rs (Frankfurters) is available as both an **executable** (`frs`) and 
 with the hope of providing safe and correct bindings for the API.
 
 > [!NOTE]
-> While the Frankfurter API works well most of the time, there are some edge cases and the returned
-> errors are not exactly informative. If you run into any problems while using these bindings, please open
+> If you run into any problems or unexpected behaviour while using `frankfurte-rs`, please open
 > an issue with the details of the error encountered.
 
 ## Library
 
 Install with `cargo add lib_frankfurter` or simply add `lib_frankfurter` your `Cargo.toml`.
 
-Then, check out the [this example](./lib/examples/basic.rs) to see basic usage.
+Then, check out [this example](./lib/examples/basic.rs) to see basic usage.
 
 ## CLI
 
