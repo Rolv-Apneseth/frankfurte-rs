@@ -4,9 +4,8 @@ use predicates::{
     str::{contains, is_match},
 };
 
-use crate::shared::get_cmd;
-
 use super::INVALID_DATES;
+use crate::shared::get_cmd;
 
 pub(super) const COMMAND: &str = "convert";
 
