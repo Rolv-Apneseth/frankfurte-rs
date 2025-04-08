@@ -8,7 +8,7 @@ use shared::{get_invalid_server, get_server};
 
 #[tokio::test]
 async fn endpoint_period() {
-    let server = get_server();
+    let (server, _container) = get_server().await;
     let make_request = |request: period::Request| async { server.period(request).await.unwrap() };
 
     // BASIC
@@ -61,6 +61,6 @@ async fn endpoint_period() {
     );
 
     // ERROR RESPONSE FROM API
-    let server = get_invalid_server();
+    let server = get_invalid_server().await;
     assert!(server.period(Default::default()).await.is_err())
 }

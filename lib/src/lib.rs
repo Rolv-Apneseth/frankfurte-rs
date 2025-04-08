@@ -1,9 +1,8 @@
-// #![doc = include_str!("../../README.md")]
 //! Rust bindings to the [Frankfurter API](https://github.com/lineofflight/frankfurter)
 //!
 //! ## Usage
 //!
-//! ```rust
+//! ```no_run
 #![doc = include_str!("../examples/basic.rs")]
 //! ```
 

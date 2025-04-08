@@ -6,7 +6,7 @@ use shared::{get_invalid_server, get_server};
 
 #[tokio::test]
 async fn endpoint_convert() {
-    let server = get_server();
+    let (server, _container) = get_server().await;
     let make_request = |request: convert::Request| async { server.convert(request).await.unwrap() };
 
     // BASIC
@@ -38,6 +38,6 @@ async fn endpoint_convert() {
     assert_eq!(res.date, date);
 
     // ERROR RESPONSE FROM API
-    let server = get_invalid_server();
+    let server = get_invalid_server().await;
     assert!(server.convert(Default::default()).await.is_err())
 }
