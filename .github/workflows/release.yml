@@ -47,9 +47,6 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
 
-          - target: x86_64-unknown-linux-musl
-            os: ubuntu-latest
-
           - target: x86_64-apple-darwin
             os: macos-latest
 
@@ -59,10 +56,6 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
-
-      - name: Install musl libc
-        if: ${{ contains(matrix.target, 'musl') }}
-        run: sudo apt install musl-tools
 
       - name: Set up Rust
         run: rustup update stable && rustup target add ${{ matrix.target }}
