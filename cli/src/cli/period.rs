@@ -113,7 +113,7 @@ impl ExecuteSubcommand for Command {
                 }
             }
 
-            writeln!(&mut stdout, "{}", table)?;
+            writeln!(&mut stdout, "{table}")?;
         }
 
         Ok(())
