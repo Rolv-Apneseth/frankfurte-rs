@@ -15,7 +15,7 @@ enum_dispatch = { workspace = true }
 chrono = { workspace = true }
 strum = { workspace = true }
 url = { workspace = true }
-reqwest = { version = "0.12.18", features = ["json"] }
+reqwest = { version = "0.12.21", features = ["json"] }
 serde = { version = "^1.0", features = ["derive"] }
 thiserror = { version = "2.0.12" }
 fast-float-compare = { version = "0.1.1" }
@@ -23,4 +23,4 @@ fast-float-compare = { version = "0.1.1" }
 [dev-dependencies]
 tokio = { workspace = true }
 pretty_assertions = { version = "1.4.1" }
-proptest = "1.6.0"
+proptest = "1.7.0"
