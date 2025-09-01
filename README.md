@@ -42,6 +42,8 @@ Then, check out [this example](./lib/examples/basic.rs) to see basic usage.
 
 ## CLI
 
+![demo](./assets/demo.gif)
+
 ### Installation
 
 #### Cargo
