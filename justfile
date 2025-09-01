@@ -7,6 +7,8 @@ alias d := develop
 alias du := docker_up
 alias dd := docker_down
 alias p := publish
+alias g := gif
+alias dg := develop-gif
 
 # List commands
 default:
@@ -49,3 +51,11 @@ docker_down:
 publish: test
     cargo publish --package lib_frankfurter
     cargo publish --package frankfurter_cli
+
+# Generate the demo GIF
+gif:
+    vhs assets/demo.tape --output assets/demo.gif
+
+# Re-generate the demo GIF whenever `demo.tape` is modified
+develop-gif:
+    echo assets/demo.tape | entr vhs /_ --output assets/demo.gif
