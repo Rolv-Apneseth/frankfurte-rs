@@ -46,7 +46,7 @@ pub(super) fn base_build_query_params(
             query_params.push((
                 "symbols",
                 t.iter()
-                    .map(|s| s.to_string())
+                    .map(std::string::ToString::to_string)
                     .collect::<Vec<String>>()
                     .join(","),
             ))

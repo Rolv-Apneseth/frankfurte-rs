@@ -56,7 +56,7 @@ impl TryFrom<NaiveDate> for ValidDate {
 impl FromStr for ValidDate {
     type Err = Error;
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        ValidDate::try_from(NaiveDate::from_str(s).map_err(|_| Error::InvalidDate(s.to_string()))?)
+        ValidDate::try_from(NaiveDate::from_str(s).map_err(|_| Error::InvalidDate(s.to_owned()))?)
     }
 }
 
