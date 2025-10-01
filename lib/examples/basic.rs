@@ -1,9 +1,9 @@
 use std::str::FromStr;
 
 use lib_frankfurter::{
-    api::{convert, currencies, period, ServerClient},
-    url::Url,
     ValidDate,
+    api::{ServerClient, convert, currencies, period},
+    url::Url,
 };
 
 #[tokio::main]

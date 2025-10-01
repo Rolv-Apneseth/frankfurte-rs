@@ -74,11 +74,13 @@ mod tests_shared {
         );
 
         // INVALID TARGETS
-        assert!(base_ensure_valid(
-            &Some(Currency::USD),
-            &Some(vec![Currency::USD, Currency::AUD])
-        )
-        .is_err());
+        assert!(
+            base_ensure_valid(
+                &Some(Currency::USD),
+                &Some(vec![Currency::USD, Currency::AUD])
+            )
+            .is_err()
+        );
 
         // Check against default (EUR)
         assert!(base_ensure_valid(&None, &Some(vec![Currency::EUR, Currency::AUD])).is_err());

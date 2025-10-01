@@ -2,7 +2,7 @@ mod shared;
 use std::str::FromStr;
 
 use chrono::{Datelike, NaiveDate};
-use lib_frankfurter::{api::period, Currency, CurrencyValue, ValidDate};
+use lib_frankfurter::{Currency, CurrencyValue, ValidDate, api::period};
 use pretty_assertions::assert_eq;
 use shared::{get_invalid_server, get_server};
 

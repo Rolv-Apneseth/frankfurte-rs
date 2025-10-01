@@ -2,8 +2,8 @@ use std::io::Write;
 
 use clap::Parser;
 use comfy_table::{
-    modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL_CONDENSED, Cell, CellAlignment, Color,
-    ContentArrangement, Table,
+    Cell, CellAlignment, Color, ContentArrangement, Table, modifiers::UTF8_ROUND_CORNERS,
+    presets::UTF8_FULL_CONDENSED,
 };
 use lib_frankfurter::api::{self, ServerClient};
 use termcolor::StandardStream;

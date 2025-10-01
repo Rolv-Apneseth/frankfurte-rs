@@ -4,7 +4,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::{base_build_query_params, base_ensure_valid, ServerClientRequest};
+use super::{ServerClientRequest, base_build_query_params, base_ensure_valid};
 use crate::data::{Currency, CurrencyValue, CurrencyValueMap, ValidDate};
 
 /// Response for fetching the latest exchange rates.
@@ -100,24 +100,32 @@ mod tests_convert {
     #[test]
     fn test_ensure_valid() {
         // Check that [`super::base_ensure_valid`] is being called
-        assert!(Request::default()
-            .with_base(Currency::EUR)
-            .with_targets(vec![Currency::EUR, Currency::USD])
-            .ensure_valid()
-            .is_err());
+        assert!(
+            Request::default()
+                .with_base(Currency::EUR)
+                .with_targets(vec![Currency::EUR, Currency::USD])
+                .ensure_valid()
+                .is_err()
+        );
 
         // VALID DATE
-        assert!(Request::default()
-            .with_date(ValidDate::max())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_date(ValidDate::max())
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
 
         // Weekend - will just use the closest date with data
-        assert!(Request::default()
-            .with_date(ValidDate::try_from(NaiveDate::from_ymd_opt(2024, 2, 3).unwrap()).unwrap())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_date(
+                    ValidDate::try_from(NaiveDate::from_ymd_opt(2024, 2, 3).unwrap()).unwrap()
+                )
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
     }
 }

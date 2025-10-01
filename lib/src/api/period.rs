@@ -5,11 +5,11 @@ use std::{borrow::Cow, collections::BTreeMap};
 
 use serde::{Deserialize, Serialize};
 
-use super::{base_build_query_params, base_ensure_valid, ServerClientRequest};
+use super::{ServerClientRequest, base_build_query_params, base_ensure_valid};
 use crate::{
+    ValidDate,
     data::{Currency, CurrencyValue, CurrencyValueMap},
     error::Error,
-    ValidDate,
 };
 
 /// Response for fetching the latest exchange rates.
@@ -140,66 +140,84 @@ mod tests_period {
     #[test]
     fn ensure_valid() {
         // Check that [`super::base_ensure_valid`] is being called
-        assert!(Request::default()
-            .with_base(Currency::EUR)
-            .with_targets(vec![Currency::EUR, Currency::USD])
-            .ensure_valid()
-            .is_err());
+        assert!(
+            Request::default()
+                .with_base(Currency::EUR)
+                .with_targets(vec![Currency::EUR, Currency::USD])
+                .ensure_valid()
+                .is_err()
+        );
 
         // VALID START DATE
-        assert!(Request::default()
-            .with_start_date(ValidDate::default())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_start_date(ValidDate::default())
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
 
-        assert!(Request::default()
-            .with_start_date(ValidDate::max())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_start_date(ValidDate::max())
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
 
         // VALID END DATE
-        assert!(Request::default()
-            .with_end_date(ValidDate::from_str("2000-02-04").unwrap())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_end_date(ValidDate::from_str("2000-02-04").unwrap())
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
 
         // Not quite weekend only - Friday-Sun
-        assert!(Request::default()
-            .with_start_date(ValidDate::from_str("2024-08-02").unwrap())
-            .with_end_date(ValidDate::from_str("2024-08-04").unwrap())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_start_date(ValidDate::from_str("2024-08-02").unwrap())
+                .with_end_date(ValidDate::from_str("2024-08-04").unwrap())
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
         // Weekend only - Sat-Sun
-        assert!(Request::default()
-            .with_start_date(ValidDate::from_str("2024-08-03").unwrap())
-            .with_end_date(ValidDate::from_str("2024-08-04").unwrap())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_start_date(ValidDate::from_str("2024-08-03").unwrap())
+                .with_end_date(ValidDate::from_str("2024-08-04").unwrap())
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
         // Weekend only - Sat-Sat
-        assert!(Request::default()
-            .with_start_date(ValidDate::from_str("2024-01-13").unwrap())
-            .with_end_date(ValidDate::from_str("2024-01-13").unwrap())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_start_date(ValidDate::from_str("2024-01-13").unwrap())
+                .with_end_date(ValidDate::from_str("2024-01-13").unwrap())
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
         // Weekend only - Sun-Sun
-        assert!(Request::default()
-            .with_start_date(ValidDate::from_str("2024-06-23").unwrap())
-            .with_end_date(ValidDate::from_str("2024-06-23").unwrap())
-            .ensure_valid()
-            .inspect_err(dbg_err)
-            .is_ok());
+        assert!(
+            Request::default()
+                .with_start_date(ValidDate::from_str("2024-06-23").unwrap())
+                .with_end_date(ValidDate::from_str("2024-06-23").unwrap())
+                .ensure_valid()
+                .inspect_err(dbg_err)
+                .is_ok()
+        );
 
         // INVALID END DATE
-        assert!(Request::default()
-            .with_start_date(ValidDate::from_str("2024-06-23").unwrap())
-            .with_end_date(ValidDate::from_str("2024-06-22").unwrap())
-            .ensure_valid()
-            .is_err());
+        assert!(
+            Request::default()
+                .with_start_date(ValidDate::from_str("2024-06-23").unwrap())
+                .with_end_date(ValidDate::from_str("2024-06-22").unwrap())
+                .ensure_valid()
+                .is_err()
+        );
     }
 }

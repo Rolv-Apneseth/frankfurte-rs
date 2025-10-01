@@ -2,16 +2,16 @@ use std::io::Write;
 
 use clap::Parser;
 use comfy_table::{
-    modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL_CONDENSED, Cell, CellAlignment, Color,
-    ContentArrangement, Table,
+    Cell, CellAlignment, Color, ContentArrangement, Table, modifiers::UTF8_ROUND_CORNERS,
+    presets::UTF8_FULL_CONDENSED,
 };
 use lib_frankfurter::{
-    api::{self, ServerClient},
     Currency, CurrencyValue, ValidDate,
+    api::{self, ServerClient},
 };
 use termcolor::StandardStream;
 
-use super::{utils::if_supports_colour, ExecuteSubcommand, SubcommandBaseModifiers};
+use super::{ExecuteSubcommand, SubcommandBaseModifiers, utils::if_supports_colour};
 
 /// Fetch exchange rates between currencies over a given time period
 #[derive(Debug, Parser)]

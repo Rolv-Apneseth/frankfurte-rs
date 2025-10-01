@@ -1,6 +1,6 @@
 use reqwest::StatusCode;
 
-use crate::{data::Currency, CurrencyValue, ValidDate};
+use crate::{CurrencyValue, ValidDate, data::Currency};
 
 /// [`std::result::Result`] wrapper for convenience.
 pub(super) type Result<T> = std::result::Result<T, Error>;
