@@ -8,7 +8,7 @@ pub(super) type Result<T> = std::result::Result<T, Error>;
 /// Possible errors that can be encountered when making requests using the [`crate::api::ServerClient`].
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
-    #[error("The target currencies '{}' include the base currency '{base}'", .targets.iter().map(|t| t.to_string()).collect::<Vec<String>>().join(","))]
+    #[error("The target currencies '{}' include the base currency '{base}'", .targets.iter().map(std::string::ToString::to_string).collect::<Vec<String>>().join(","))]
     RequestTargetsIncludeBase {
         base: Currency,
         targets: Vec<Currency>,

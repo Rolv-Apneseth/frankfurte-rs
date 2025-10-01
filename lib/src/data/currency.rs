@@ -32,6 +32,7 @@ pub(crate) type CurrencyValueMap = BTreeMap<Currency, CurrencyValue>;
     Ord,
     Hash,
     Debug,
+    Default,
     Deserialize,
     Serialize,
     EnumString,
@@ -50,6 +51,7 @@ pub enum Currency {
     CNY,
     CZK,
     DKK,
+    #[default]
     EUR,
     GBP,
     HKD,
@@ -81,12 +83,6 @@ pub enum Currency {
     #[serde(untagged)]
     #[strum(serialize = "{0}")]
     Other(String),
-}
-
-impl Default for Currency {
-    fn default() -> Self {
-        Self::EUR
-    }
 }
 
 // CURRENCY VALUE ----------------------------------------------------------------------------------
@@ -156,7 +152,7 @@ impl FromStr for CurrencyValue {
                 // Ignore potential thousand separators
                 &s.replace([',', '_'], ""),
             )
-            .map_err(|_| Error::InvalidCurrencyValue(s.to_string()))?,
+            .map_err(|_| Error::InvalidCurrencyValue(s.to_owned()))?,
         )
     }
 }
