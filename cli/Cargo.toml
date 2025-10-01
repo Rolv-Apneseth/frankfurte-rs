@@ -21,11 +21,11 @@ strum = { workspace = true }
 url = { workspace = true }
 tokio = { workspace = true }
 lib_frankfurter = { path = "../lib", version = "^0" }
-clap = { version = "4.5.42", features = ["derive"] }
+clap = { version = "4.5.48", features = ["derive"] }
 termcolor = { version = "1.4.1" }
 is-terminal = { version = "0.4.16" }
-comfy-table = "7.1.4"
-anyhow = "1.0.98"
+comfy-table = "7.2.1"
+anyhow = "1.0.100"
 
 [dev-dependencies]
 assert_cmd = "2.0.17"
