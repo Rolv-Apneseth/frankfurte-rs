@@ -81,13 +81,13 @@ impl ServerClientRequest for Request {
     fn ensure_valid(&self) -> crate::error::Result<()> {
         base_ensure_valid(&self.base, &self.targets)?;
 
-        if let Some(end_date) = self.end_date {
-            if self.start_date.gt(&end_date) {
-                return Err(Error::RequestEndDateBeforeStart {
-                    start: self.start_date,
-                    end: end_date,
-                });
-            }
+        if let Some(end_date) = self.end_date
+            && self.start_date.gt(&end_date)
+        {
+            return Err(Error::RequestEndDateBeforeStart {
+                start: self.start_date,
+                end: end_date,
+            });
         }
 
         Ok(())
