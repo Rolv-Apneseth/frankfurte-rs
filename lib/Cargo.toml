@@ -23,4 +23,4 @@ fast-float-compare = { version = "0.1" }
 [dev-dependencies]
 tokio = { workspace = true }
 pretty_assertions = { version = "1.4" }
-proptest = "1.10"
+proptest = "1.11"
