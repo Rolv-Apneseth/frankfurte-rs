@@ -29,7 +29,7 @@ test: docker_up && docker_down
 
 # Run test suite whenever any change is made
 develop: format docker_up
-    cargo watch -w cli -w lib -s "cargo test --all -- --nocapture"
+    bacon test --all-features
 
 # Build
 build: format
