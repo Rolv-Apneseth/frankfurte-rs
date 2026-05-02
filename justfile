@@ -4,8 +4,8 @@ alias f := format
 alias t := test
 alias c := check
 alias d := develop
-alias du := docker_up
-alias dd := docker_down
+alias du := podman_up
+alias dd := podman_down
 alias p := publish
 alias g := gif
 alias dg := develop-gif
@@ -24,11 +24,11 @@ format:
     cargo clippy --all -- -D warnings 
 
 # Test
-test: docker_up && docker_down
+test: podman_up && podman_down
     cargo test --all -- --nocapture
 
 # Run test suite whenever any change is made
-develop: format docker_up
+develop: format podman_up
     bacon test --all-features
 
 # Build
@@ -36,16 +36,16 @@ build: format
     cargo build --release
 
 # Run an example
-example EXAMPLE=("basic"): docker_up && docker_down
+example EXAMPLE=("basic"): podman_up && podman_down
     -cargo run --package lib_frankfurter --example {{ EXAMPLE }}
 
 # Start up the local Frankfurter API
-docker_up:
-    docker compose up -d --wait
+podman_up:
+    podman compose up -d --wait
 
 # Shut down the local Frankfurter API
-docker_down:
-    docker compose down
+podman_down:
+    podman compose down
 
 # Publish both the binary and library crates to crates.io
 publish: test
