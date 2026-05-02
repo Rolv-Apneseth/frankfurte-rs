@@ -1,7 +1,7 @@
 version: "3"
 services:
   api:
-    image: lineofflight/frankfurter
+    image: lineofflight/frankfurter:v1.0.0
     container_name: frankfurter-api
     restart: no
     pull_policy: always
